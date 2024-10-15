@@ -20,18 +20,16 @@ local function getStats()
     local food = 0.0 -- Get players hunger level
     -- local temp = 0.0 -- Get players temperature level   -- TODO: Temp
     local stamina = 0.0 -- Get players stamina level
-    local stress = 0.0 -- Get players stress level
-    return health, armour, drink, food, stamina, stress
+    return health, armour, drink, food, stamina
 end
 
 local currentTime = GetGameTimer()
 local initTime = 0
 local thirtySecondsHasPassed = initTime > 30   -- and currentTime
 
-local function handleHudArrows(health, armour, drink, food, stamina, stress)
+local function handleHudArrows(health, armour, drink, food)
     if thirtySecondsHasPassed then
-        health, armour, drink, food, stamina, stress = getStats()
-        initTime = 0
+        health, armour, drink, food, stamina = getStats()
         if health < 50 then -- Less than 50
             healthHasNegativeArrow = true
         else
@@ -52,6 +50,7 @@ local function handleHudArrows(health, armour, drink, food, stamina, stress)
         else
             foodHasNegativeArrow = false
         end
+        initTime = 0
         return healthHasNegativeArrow, armourHasNegativeArrow, drinkHasNegativeArrow, foodHasNegativeArrow
     end
 end
@@ -64,21 +63,29 @@ local function hudArrows()
     local foodHasNegativeArrow = false
     -- local tempHasArrow = false -- TODO: Temp
 
-    local health, armour, drink, food, stamina, stress = getStats()
+    local health, armour, drink, food = getStats()
 
     while true do
         Wait(0)
-        healthHasNegativeArrow, armourHasNegativeArrow, drinkHasNegativeArrow, foodHasNegativeArrow = handleHudArrows(health, armour, drink, food, stamina, stress)
+        healthHasNegativeArrow, armourHasNegativeArrow, drinkHasNegativeArrow, foodHasNegativeArrow = handleHudArrows(health, armour, drink, food)
+        SendNUIMessage({
+            type = "updateArrows",
+            healthArrow = healthHasNegativeArrow,
+            armourArrow = armourHasNegativeArrow,
+            drinkArrow = drinkHasNegativeArrow,
+            foodArrow = foodHasNegativeArrow,
+        })
     end
 end
+CreateThread(hudArrows)
 
 -- A thread to update the HUD
 CreateThread(function()
     while true do
         Wait(1000)
-        local health, armour, drink, food, stamina, stress = getStats()
+        local health, armour, drink, food, stamina = getStats()
         jayPrint("Updating HUD")
-        jayPrint(health, armour, drink, food, stamina, stress)
+        jayPrint(health, armour, drink, food, stamina)
         SendNUIMessage({
             type = "updateHUD",
             health = health,
@@ -86,7 +93,6 @@ CreateThread(function()
             drink = drink,
             food = food,
             stamina = stamina,
-            stress = stress,
         })
     end
 end)

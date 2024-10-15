@@ -7,6 +7,8 @@ import {
   MdOutlineKeyboardDoubleArrowDown,
 } from "react-icons/md";
 
+import StaminaBar from "./StaminaBar";
+
 interface LoadImagesParams {
   folder: string; // Folder name containing images
   count: number; // Number of images to load
@@ -52,30 +54,29 @@ function App() {
   const [healthIcons, setHealthIcons] = useState<string[]>([]);
   const [drinkIcons, setDrinkIcons] = useState<string[]>([]);
   const [foodIcons, setFoodIcons] = useState<string[]>([]);
-  const [bloodIcons, setBloodIcons] = useState<string[]>([]);
-  
+  const [armourIcons, setArmourIcons] = useState<string[]>([]);
+
   const [levels, setLevels] = useState({
     health: 100,
     armour: 100,
     drink: 100,
     food: 100,
     stamina: 100,
-    stress: 0,
   });
 
   useEffect(() => {
     const fetchIcons = async () => {
-      const [health, drink, food, blood] = await Promise.all([
-        loadImages("health", 27),
+      const [health, drink, food, armour] = await Promise.all([
         loadImages("drink", 20),
+        loadImages("armour", 2),
         loadImages("food", 13),
-        loadImages("blood", 27),
+        loadImages("health", 27),
       ]);
 
       setHealthIcons(health.map((img) => img.default));
       setDrinkIcons(drink.map((img) => img.default));
       setFoodIcons(food.map((img) => img.default));
-      setBloodIcons(blood.map((img) => img.default));
+      setArmourIcons(armour.map((img) => img.default));
     };
 
     fetchIcons();
@@ -83,16 +84,17 @@ function App() {
     // NUI message listener
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "updateHUD") {
-        const { health, armour, drink, food, stamina, stress } = event.data.data;
-        setLevels({ health, armour, drink, food, stamina, stress });
+        const { health, armour, drink, food, stamina } =
+          event.data.data;
+        setLevels({ health, armour, drink, food, stamina });
       }
     };
 
-    window.addEventListener('message', handleMessage);
+    window.addEventListener("message", handleMessage);
 
     // Cleanup listener on component unmount
     return () => {
-      window.removeEventListener('message', handleMessage);
+      window.removeEventListener("message", handleMessage);
     };
   }, []);
 
@@ -106,20 +108,18 @@ function App() {
     { isTop: false, isBottom: false, isDoubleTop: true, isDoubleBottom: false }, // Health
     { isTop: true, isBottom: false, isDoubleTop: false, isDoubleBottom: false }, // Food
     { isTop: false, isBottom: false, isDoubleTop: true, isDoubleBottom: false }, // Drink
-    { isTop: false, isBottom: false, isDoubleTop: true, isDoubleBottom: false }, // Blood
+    { isTop: false, isBottom: false, isDoubleTop: true, isDoubleBottom: false }, // Armour
   ];
 
   return (
     <div className="w-screen h-screen flex flex-col items-end justify-end p-6 example">
-      <div className="flex flex-row-reverse gap-2">
+      <div className="flex flex-row-reverse gap-4 mr-[2.35rem]">
         {[
           { level: levels.health, icons: healthIcons, alt: "Health Icon" },
           { level: levels.food, icons: foodIcons, alt: "Food Icon" },
-          { level: levels.drink, icons: drinkIcons, alt: "Drink Icon" },
-          { level: levels.armour, icons: bloodIcons, alt: "Blood Icon" },
         ].map((item, index) => (
           <div
-            className="flex items-center justify-end flex-col gap-1"
+            className="flex items-center justify-end flex-col"
             key={index}
           >
             {!arrowConfigs[index].isDoubleBottom &&
@@ -137,10 +137,36 @@ function App() {
             )}
           </div>
         ))}
+        {/** Spacer Div */}
+        <h1 className="flex items-center mt-4 text-2xl w-6 opacity-70 justify-center">|</h1>
+        {[
+          { level: levels.drink, icons: drinkIcons, alt: "Drink Icon" },
+          { level: levels.armour, icons: armourIcons, alt: "Armour Icon" },
+        ].map((item, index) => (
+          <div
+            className="flex items-center justify-end flex-col"
+            key={index + 2} // Adjusted key for unique identification
+          >
+            {!arrowConfigs[index + 2].isDoubleBottom &&
+              !arrowConfigs[index + 2].isBottom && (
+                <ArrowButton {...arrowConfigs[index + 2]} />
+              )}
+            <img
+              height={35}
+              width={35}
+              src={getIcon(item.level, item.icons)}
+              alt={item.alt}
+            />
+            {!arrowConfigs[index + 2].isDoubleTop && !arrowConfigs[index + 2].isTop && (
+              <ArrowButton {...arrowConfigs[index + 2]} />
+            )}
+          </div>
+        ))}
       </div>
+      <StaminaBar stamina={levels.stamina} />
     </div>
   );
-}
+}  
 
 import { createRoot } from "react-dom/client";
 createRoot(document.getElementById("root")!).render(<App />);
