@@ -2,6 +2,9 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import { MdOutlineKeyboardArrowUp } from "react-icons/md";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
+import { MdOutlineKeyboardDoubleArrowUp } from "react-icons/md";
+import { MdOutlineKeyboardDoubleArrowDown } from "react-icons/md";
+
 
 interface LoadImagesParams {
   folder: string; // Folder name containing images
@@ -61,18 +64,18 @@ function App() {
   return (
     <div className="w-screen h-screen flex flex-col items-end justify-end p-6 example">
       <div className="flex flex-row-reverse gap-2">
-        <div className="flex items-center justify-center flex-col">
-          <MdOutlineKeyboardArrowUp size={25}  />
+        <div className="flex items-center justify-end flex-col gap-1">
+          <h1>44%</h1>
           <img
             height={35}
             width={35}
             src={getIcon(levels.health, healthIcons)}
             alt="Health Icon"
           />
-          <MdOutlineKeyboardArrowDown size={25} />
+          <MdOutlineKeyboardDoubleArrowDown size={25} />
         </div>
-        <div className="flex items-center justify-center flex-col">
-          <MdOutlineKeyboardArrowUp size={25} />
+        <div className="flex items-center justify-end flex-col gap-1">
+          <h1>76%</h1>
           <img
             height={35}
             width={35}
@@ -81,8 +84,8 @@ function App() {
           />
           <MdOutlineKeyboardArrowDown size={25} />
         </div>
-        <div className="flex items-center justify-center flex-col">
-          <MdOutlineKeyboardArrowUp size={25} />
+        <div className="flex items-center justify-end flex-col gap-1">
+          <h1>55%</h1>
           <img
             height={35}
             width={35}
@@ -91,7 +94,7 @@ function App() {
           />
           <MdOutlineKeyboardArrowDown size={25} />
         </div>
-        <div className="flex items-center justify-center flex-col">
+        <div className="flex items-center justify-center flex-col gap-1">
           <MdOutlineKeyboardArrowUp size={25} />
           <img
             height={35}
@@ -99,7 +102,7 @@ function App() {
             src={getIcon(levels.blood, bloodIcons)}
             alt="Blood Icon"
           />
-          <MdOutlineKeyboardArrowDown size={25} />
+          <h1>22%</h1>
         </div>
       </div>
     </div>

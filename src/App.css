@@ -27,7 +27,8 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: .85rem;
+  font-weight: 700;
 }
 
 .example {
