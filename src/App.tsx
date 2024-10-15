@@ -1,5 +1,7 @@
 import "./App.css";
 import { useState, useEffect } from "react";
+import { MdOutlineKeyboardArrowUp } from "react-icons/md";
+import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 
 interface LoadImagesParams {
   folder: string; // Folder name containing images
@@ -9,8 +11,9 @@ interface LoadImagesParams {
 // Function to load images dynamically
 const loadImages = (folder: string, count: number) => {
   return Promise.all(
-    Array.from({ length: count }, (_, i) =>
-      import(`../public/${folder}/${folder}${i}.png`)
+    Array.from(
+      { length: count },
+      (_, i) => import(`/${folder}/${folder}${i}.png`)
     )
   );
 };
@@ -20,27 +23,27 @@ function App() {
   const [drinkIcons, setDrinkIcons] = useState<string[]>([]);
   const [foodIcons, setFoodIcons] = useState<string[]>([]);
   const [bloodIcons, setBloodIcons] = useState<string[]>([]);
-  
+
   const [levels, setLevels] = useState({
     health: 55,
-    drink: 55,
-    food: 55,
-    blood: 55,
+    drink: 48,
+    food: 51,
+    blood: 62,
   });
 
   useEffect(() => {
     const fetchIcons = async () => {
       const [health, drink, food, blood] = await Promise.all([
-        loadImages("health", 25),
+        loadImages("health", 27),
         loadImages("drink", 20),
         loadImages("food", 13),
-        loadImages("blood", 4),
+        loadImages("blood", 27),
       ]);
 
-      setHealthIcons(health.map(img => img.default));
-      setDrinkIcons(drink.map(img => img.default));
-      setFoodIcons(food.map(img => img.default));
-      setBloodIcons(blood.map(img => img.default));
+      setHealthIcons(health.map((img) => img.default));
+      setDrinkIcons(drink.map((img) => img.default));
+      setFoodIcons(food.map((img) => img.default));
+      setBloodIcons(blood.map((img) => img.default));
     };
 
     fetchIcons();
@@ -52,12 +55,48 @@ function App() {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col items-end justify-end p-5 example">
-      <div className="flex flex-row-reverse">
-        <img height={45} width={45} src={getIcon(levels.health, healthIcons)} alt="Health Icon" />
-        <img height={45} width={45} src={getIcon(levels.food, foodIcons)} alt="Food Icon" />
-        <img height={45} width={45} src={getIcon(levels.drink, drinkIcons)} alt="Water Icon" />
-        <img height={45} width={45} src={getIcon(levels.blood, bloodIcons)} alt="Blood Icon" />
+    <div className="w-screen h-screen flex flex-col items-end justify-end p-6 example">
+      <div className="flex flex-row-reverse gap-2">
+        <div className="flex items-center justify-center flex-col">
+          <MdOutlineKeyboardArrowUp size={25}  />
+          <img
+            height={35}
+            width={35}
+            src={getIcon(levels.health, healthIcons)}
+            alt="Health Icon"
+          />
+          <MdOutlineKeyboardArrowDown size={25} />
+        </div>
+        <div className="flex items-center justify-center flex-col">
+          <MdOutlineKeyboardArrowUp size={25} />
+          <img
+            height={35}
+            width={35}
+            src={getIcon(levels.food, foodIcons)}
+            alt="Food Icon"
+          />
+          <MdOutlineKeyboardArrowDown size={25} />
+        </div>
+        <div className="flex items-center justify-center flex-col">
+          <MdOutlineKeyboardArrowUp size={25} />
+          <img
+            height={35}
+            width={35}
+            src={getIcon(levels.drink, drinkIcons)}
+            alt="Water Icon"
+          />
+          <MdOutlineKeyboardArrowDown size={25} />
+        </div>
+        <div className="flex items-center justify-center flex-col">
+          <MdOutlineKeyboardArrowUp size={25} />
+          <img
+            height={35}
+            width={35}
+            src={getIcon(levels.blood, bloodIcons)}
+            alt="Blood Icon"
+          />
+          <MdOutlineKeyboardArrowDown size={25} />
+        </div>
       </div>
     </div>
   );
