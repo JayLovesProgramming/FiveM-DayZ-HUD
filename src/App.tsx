@@ -8,6 +8,8 @@ import {
 } from "react-icons/md";
 
 import StaminaBar from "./StaminaBar";
+import Compass from "./Compass";
+const playerDirection = 25; 
 
 interface LoadImagesParams {
   folder: string; // Folder name containing images
@@ -84,8 +86,7 @@ function App() {
     // NUI message listener
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "updateHUD") {
-        const { health, armour, drink, food, stamina } =
-          event.data.data;
+        const { health, armour, drink, food, stamina } = event.data.data;
         setLevels({ health, armour, drink, food, stamina });
       }
     };
@@ -112,61 +113,65 @@ function App() {
   ];
 
   return (
-    <div className="w-screen h-screen flex flex-col items-end justify-end p-6 example">
-      <div className="flex flex-row-reverse gap-4 mr-[2.35rem]">
-        {[
-          { level: levels.health, icons: healthIcons, alt: "Health Icon" },
-          { level: levels.food, icons: foodIcons, alt: "Food Icon" },
-        ].map((item, index) => (
-          <div
-            className="flex items-center justify-end flex-col"
-            key={index}
-          >
-            {!arrowConfigs[index].isDoubleBottom &&
-              !arrowConfigs[index].isBottom && (
-                <ArrowButton {...arrowConfigs[index]} />
-              )}
-            <img
-              height={35}
-              width={35}
-              src={getIcon(item.level, item.icons)}
-              alt={item.alt}
-            />
-            {!arrowConfigs[index].isDoubleTop && !arrowConfigs[index].isTop && (
-              <ArrowButton {...arrowConfigs[index]} />
-            )}
-          </div>
-        ))}
-        {/** Spacer Div */}
-        <h1 className="flex items-center mt-4 text-2xl w-6 opacity-70 justify-center">|</h1>
-        {[
-          { level: levels.drink, icons: drinkIcons, alt: "Drink Icon" },
-          { level: levels.armour, icons: armourIcons, alt: "Armour Icon" },
-        ].map((item, index) => (
-          <div
-            className="flex items-center justify-end flex-col"
-            key={index + 2} // Adjusted key for unique identification
-          >
-            {!arrowConfigs[index + 2].isDoubleBottom &&
-              !arrowConfigs[index + 2].isBottom && (
-                <ArrowButton {...arrowConfigs[index + 2]} />
-              )}
-            <img
-              height={35}
-              width={35}
-              src={getIcon(item.level, item.icons)}
-              alt={item.alt}
-            />
-            {!arrowConfigs[index + 2].isDoubleTop && !arrowConfigs[index + 2].isTop && (
-              <ArrowButton {...arrowConfigs[index + 2]} />
-            )}
-          </div>
-        ))}
+    <>
+      <Compass direction={playerDirection} />
+      <div className="w-screen h-screen flex flex-col items-end justify-end p-6 example">
+        <div className="flex flex-row-reverse gap-4 mr-[2.35rem]">
+          {[
+            { level: levels.health, icons: healthIcons, alt: "Health Icon" },
+            { level: levels.food, icons: foodIcons, alt: "Food Icon" },
+          ].map((item, index) => (
+            <div className="flex items-center justify-end flex-col" key={index}>
+              {!arrowConfigs[index].isDoubleBottom &&
+                !arrowConfigs[index].isBottom && (
+                  <ArrowButton {...arrowConfigs[index]} />
+                )}
+              <img
+                height={35}
+                width={35}
+                src={getIcon(item.level, item.icons)}
+                alt={item.alt}
+              />
+              {!arrowConfigs[index].isDoubleTop &&
+                !arrowConfigs[index].isTop && (
+                  <ArrowButton {...arrowConfigs[index]} />
+                )}
+            </div>
+          ))}
+          {/** Spacer Div */}
+          <h1 className="flex items-center mt-4 text-2xl w-6 opacity-70 justify-center">
+            |
+          </h1>
+          {[
+            { level: levels.drink, icons: drinkIcons, alt: "Drink Icon" },
+            { level: levels.armour, icons: armourIcons, alt: "Armour Icon" },
+          ].map((item, index) => (
+            <div
+              className="flex items-center justify-end flex-col"
+              key={index + 2} // Adjusted key for unique identification
+            >
+              {!arrowConfigs[index + 2].isDoubleBottom &&
+                !arrowConfigs[index + 2].isBottom && (
+                  <ArrowButton {...arrowConfigs[index + 2]} />
+                )}
+              <img
+                height={35}
+                width={35}
+                src={getIcon(item.level, item.icons)}
+                alt={item.alt}
+              />
+              {!arrowConfigs[index + 2].isDoubleTop &&
+                !arrowConfigs[index + 2].isTop && (
+                  <ArrowButton {...arrowConfigs[index + 2]} />
+                )}
+            </div>
+          ))}
+        </div>
+        <StaminaBar stamina={levels.stamina} />
       </div>
-      <StaminaBar stamina={levels.stamina} />
-    </div>
+    </>
   );
-}  
+}
 
 import { createRoot } from "react-dom/client";
 createRoot(document.getElementById("root")!).render(<App />);
