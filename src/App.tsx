@@ -25,10 +25,14 @@ function App() {
   const [bloodIcons, setBloodIcons] = useState<string[]>([]);
 
   const [levels, setLevels] = useState({
+    // health: 55,
+    // drink: 48,
+    // food: 51,
+    // blood: 62,
     health: 55,
-    drink: 48,
-    food: 51,
-    blood: 62,
+    drink: 22,
+    food: 77,
+    blood: 2,
   });
 
   useEffect(() => {
