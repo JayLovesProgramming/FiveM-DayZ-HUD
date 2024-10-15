@@ -68,7 +68,7 @@ function App() {
   });
 
   // State to track whether the player is in a vehicle
-  const [isInVehicle, setIsInVehicle] = useState(false);
+  const [isInVehicle, setIsInVehicle] = useState(true);
 
   useEffect(() => {
     const fetchIcons = async () => {
