@@ -9,7 +9,7 @@ import {
 
 import StaminaBar from "./StaminaBar";
 import Compass from "./Compass";
-const playerDirection = 25; 
+const playerDirection = 125; 
 
 interface LoadImagesParams {
   folder: string; // Folder name containing images
