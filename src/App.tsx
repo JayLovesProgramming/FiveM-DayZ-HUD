@@ -1,10 +1,11 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-import { MdOutlineKeyboardArrowUp } from "react-icons/md";
-import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-import { MdOutlineKeyboardDoubleArrowUp } from "react-icons/md";
-import { MdOutlineKeyboardDoubleArrowDown } from "react-icons/md";
-
+import {
+  MdOutlineKeyboardArrowUp,
+  MdOutlineKeyboardArrowDown,
+  MdOutlineKeyboardDoubleArrowUp,
+  MdOutlineKeyboardDoubleArrowDown,
+} from "react-icons/md";
 
 interface LoadImagesParams {
   folder: string; // Folder name containing images
@@ -21,21 +22,45 @@ const loadImages = (folder: string, count: number) => {
   );
 };
 
+// ArrowButton Component to handle different arrow icons
+const ArrowButton = ({
+  isTop,
+  isBottom,
+  isDoubleTop,
+  isDoubleBottom,
+}: {
+  isTop: boolean;
+  isBottom: boolean;
+  isDoubleTop: boolean;
+  isDoubleBottom: boolean;
+}) => {
+  if (isDoubleTop) {
+    return <MdOutlineKeyboardDoubleArrowUp size={25} />;
+  }
+  if (isTop) {
+    return <MdOutlineKeyboardArrowUp size={25} />;
+  }
+  if (isDoubleBottom) {
+    return <MdOutlineKeyboardDoubleArrowDown size={25} />;
+  }
+  if (isBottom) {
+    return <MdOutlineKeyboardArrowDown size={25} />;
+  }
+};
+
 function App() {
   const [healthIcons, setHealthIcons] = useState<string[]>([]);
   const [drinkIcons, setDrinkIcons] = useState<string[]>([]);
   const [foodIcons, setFoodIcons] = useState<string[]>([]);
   const [bloodIcons, setBloodIcons] = useState<string[]>([]);
-
+  
   const [levels, setLevels] = useState({
-    // health: 55,
-    // drink: 48,
-    // food: 51,
-    // blood: 62,
-    health: 55,
-    drink: 22,
-    food: 77,
-    blood: 2,
+    health: 100,
+    armour: 100,
+    drink: 100,
+    food: 100,
+    stamina: 100,
+    stress: 0,
   });
 
   useEffect(() => {
@@ -54,6 +79,21 @@ function App() {
     };
 
     fetchIcons();
+
+    // NUI message listener
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === "updateHUD") {
+        const { health, armour, drink, food, stamina, stress } = event.data.data;
+        setLevels({ health, armour, drink, food, stamina, stress });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // Cleanup listener on component unmount
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   const getIcon = (level: number, icons: string[]) => {
@@ -61,49 +101,42 @@ function App() {
     return icons[index];
   };
 
+  // Array to manage arrow states for each icon
+  const arrowConfigs = [
+    { isTop: false, isBottom: false, isDoubleTop: true, isDoubleBottom: false }, // Health
+    { isTop: true, isBottom: false, isDoubleTop: false, isDoubleBottom: false }, // Food
+    { isTop: false, isBottom: false, isDoubleTop: true, isDoubleBottom: false }, // Drink
+    { isTop: false, isBottom: false, isDoubleTop: true, isDoubleBottom: false }, // Blood
+  ];
+
   return (
     <div className="w-screen h-screen flex flex-col items-end justify-end p-6 example">
       <div className="flex flex-row-reverse gap-2">
-        <div className="flex items-center justify-end flex-col gap-1">
-          <h1>44%</h1>
-          <img
-            height={35}
-            width={35}
-            src={getIcon(levels.health, healthIcons)}
-            alt="Health Icon"
-          />
-          <MdOutlineKeyboardDoubleArrowDown size={25} />
-        </div>
-        <div className="flex items-center justify-end flex-col gap-1">
-          <h1>76%</h1>
-          <img
-            height={35}
-            width={35}
-            src={getIcon(levels.food, foodIcons)}
-            alt="Food Icon"
-          />
-          <MdOutlineKeyboardArrowDown size={25} />
-        </div>
-        <div className="flex items-center justify-end flex-col gap-1">
-          <h1>55%</h1>
-          <img
-            height={35}
-            width={35}
-            src={getIcon(levels.drink, drinkIcons)}
-            alt="Water Icon"
-          />
-          <MdOutlineKeyboardArrowDown size={25} />
-        </div>
-        <div className="flex items-center justify-center flex-col gap-1">
-          <MdOutlineKeyboardArrowUp size={25} />
-          <img
-            height={35}
-            width={35}
-            src={getIcon(levels.blood, bloodIcons)}
-            alt="Blood Icon"
-          />
-          <h1>22%</h1>
-        </div>
+        {[
+          { level: levels.health, icons: healthIcons, alt: "Health Icon" },
+          { level: levels.food, icons: foodIcons, alt: "Food Icon" },
+          { level: levels.drink, icons: drinkIcons, alt: "Drink Icon" },
+          { level: levels.armour, icons: bloodIcons, alt: "Blood Icon" },
+        ].map((item, index) => (
+          <div
+            className="flex items-center justify-end flex-col gap-1"
+            key={index}
+          >
+            {!arrowConfigs[index].isDoubleBottom &&
+              !arrowConfigs[index].isBottom && (
+                <ArrowButton {...arrowConfigs[index]} />
+              )}
+            <img
+              height={35}
+              width={35}
+              src={getIcon(item.level, item.icons)}
+              alt={item.alt}
+            />
+            {!arrowConfigs[index].isDoubleTop && !arrowConfigs[index].isTop && (
+              <ArrowButton {...arrowConfigs[index]} />
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
