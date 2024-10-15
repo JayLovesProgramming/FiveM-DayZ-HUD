@@ -11,15 +11,14 @@
   font-family: "Bebas Neue", sans-serif;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
+  background: url(https://mir-s3-cdn-cf.behance.net/project_modules/1400/243d09166730489.641cec8617be4.png);
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 100%;
 }
 
 h1 {
   font-size: .85rem;
   font-weight: 700;
-}
-
-.example {
-  background: url(https://mir-s3-cdn-cf.behance.net/project_modules/1400/243d09166730489.641cec8617be4.png);
-  background-size: cover;
-  background-position: center;
 }
